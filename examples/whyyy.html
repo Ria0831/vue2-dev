@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<title>Vue 源码解读</title>
+
+<head>
+  <style>
+    body {
+      margin: 0;
+    }
+
+    .main {
+      min-height: calc(100vh-100px);
+    }
+
+    .box {
+      border: 1px solid black;
+      padding: 5px;
+      width: 450px;
+      height: 400px;
+      position: relative;
+    }
+
+    .left {
+      width: 100px;
+      height: 100px;
+      background-color: red;
+      /* float: left; */
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: auto;
+    }
+
+    .right {
+      width: 100px;
+      height: 100px;
+      background-color: red;
+      float: right;
+    }
+
+    .clearfix {
+      clear: both;
+    }
+  </style>
+</head>
+<script>
+  const PENDING = "pending"
+  const FULFILED = "fulfiled"
+  const REJECT = "rejected"
+  class myPromise {
+
+    constructor(executor) {
+      // promise状态，默认是等待状态
+      this.status = PENDING
+      // 成功的值
+      this.value = undefined
+      // 保存要执行的函数
+      this.callbacks = []
+      try {
+        executor(this.resolve.bind(this), this.reject.bind(this))
+      } catch (error) {
+        this.reject(error)
+      }
+
+    }
+    resolve(value) {
+      if (this.status === PENDING) {
+        // 状态改为成功
+        this.status = FULFILED
+        // 保存成功时的函数传参
+        this.value = value
+        this.callbacks.map(callback => {
+          callback.successCallback(value)
+        })
+      }
+
+    }
+    reject(reason) {
+
+      if (this.status === PENDING) {
+        // 状态改为失败
+        this.status = REJECT
+        // 保存失败时的函数传参
+        this.value = reason
+        this.callbacks.map(callback => {
+          callback.failCallback(reason)
+        })
+      }
+    }
+    // 原型方法在多个实例中共享
+    then(successCallback, failCallback) {
+      if (typeof successCallback !== "function") {
+        successCallback = () => { }
+      }
+      if (typeof failCallback !== "function") {
+        failCallback = () => { }
+      }
+      if (this.status === PENDING) {
+        this.callbacks.push({
+          successCallback: (value) => {
+            try {
+              successCallback(value)
+            } catch (error) {
+              failCallback(error)
+            }
+
+          },
+          failCallback: (value) => {
+            failCallback(value)
+          }
+        })
+      } else if (this.status === FULFILED) {
+        setTimeout(() => {
+          try {
+            successCallback(this.value)
+          } catch (error) {
+            this.reject(error)
+          }
+        }, 0)
+      } else {
+        setTimeout(() => {
+          try {
+            failCallback(this.value)
+          } catch (error) {
+            this.reject(error)
+          }
+        }, 0)
+      }
+    }
+  }
+  const pro = new myPromise((resolve, reject) => {
+    setTimeout(() => {
+      // resolve("成功ljj")
+      reject("失败344")
+
+    }, 1000)
+    // resolve("成功ljj")
+    // reject("失败344")
+  }).then(resolve => {
+    console.log(resolve, 'resolve')
+  }, reject => {
+    console.log("拒绝了")
+    console.log(abv, 'reject')
+  })
+  console.log(pro, 'pppp')
+</script>
+
+<body>
+  <!-- <div class="container">
+    <div class="main">Main</div>
+    <div class="footer" style="height: 100px">Footer</div>
+  </div> -->
+  <div class="box">
+    <div class="left"></div>
+    <!-- <div class="right"></div>
+    <div class="clearfix"></div> -->
+  </div>
+
+
+
+</body>
+
+</html>

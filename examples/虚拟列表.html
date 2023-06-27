@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<title>Vue 源码解读</title>
+
+<head>
+  <style>
+    body {
+      margin: 0;
+    }
+
+    .main {
+      min-height: calc(100vh-100px);
+    }
+  </style>
+</head>
+
+<body>
+  <div id='app'>
+    <div class="contact-content" id='contactContent'>
+      <div class='contact-item' v-for="(item, index) in contactList" :key='index'>联系人列表===========> {{item.index}}
+      </div>
+    </div>
+  </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+</script>
+<script defer>
+  const vm = new Vue({
+    el: '#app',
+    data: function () {
+      return {
+        contactList: [],
+        reallyShowContactList: [],
+        wheelHeight: 0
+      }
+    },
+    created() {
+      this.contactList = Array(30000).fill({}).map((item, index) => ({ index }));
+    },
+    watch: {
+    },
+    methods: {
+    }
+  })
+
+</script>
+
+</html>

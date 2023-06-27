@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Vue 源码解读</title>
+</head>
+<body>
+  <div id="app">
+    {{ msg }}
+    <p>{{printMsg}}</p>
+    <p>{{printMsg}}</p>
+    <p>{{test()}}</p>
+    <p>{{test()}}</p>
+    <button @click="changeMsg">点击</button>
+    <comp></comp>
+  </div>
+  <script src="../dist/vue.js"></script>
+  <script src="./test.js"></script>
+  <script>
+    Vue.component('comp',{
+      template:'<div @click="counter++">我是组件{{counter}}</div>',
+      data(){
+        return {counter: 0 }
+      }
+    })
+    debugger
+    new Vue({
+      el: '#app',
+      data: {
+        msg: 'hello vue'
+      },
+      computed:{
+        printMsg:{
+          get(){
+            debugger
+            console.log(`${this.msg}computed`)
+            return `this.${this.msg}computed`
+          },
+          set(val){
+            this.msg = val
+          },
+          
+        }
+      },
+      mounted(){
+        // this.test1()
+      },
+      methods:{
+        test(){
+          console.log(`this.${this.msg}methods`,parseInt(1,1))
+        },
+        changeMsg(){
+          debugger
+          this.printMsg += "ahah"
+        }
+      }
+    })
+  </script>
+</body>
+</html>
